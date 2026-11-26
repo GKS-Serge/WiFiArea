@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knight-WiFiArea</title>
+    <style>
+      :root {
+        --purple-dark: #4a3568;
+        --purple-btn: #593e7a;
+        --coral: #eb6b7a;
+        --teal: #18b394;
+        --bg-lavender: #f4f2fa;
+        --text-muted: #6e6a7c;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          var(--bg-lavender) 100%
+        );
+        color: var(--purple-dark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 6%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid #ece8f6;
+      }
+      .brand {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--purple-dark);
+      }
+      .brand span {
+        color: var(--coral);
+      }
+      .nav-btns {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-outline {
+        padding: 8px 16px;
+        border-radius: 99px;
+        border: 1.5px solid var(--purple-dark);
+        color: var(--purple-dark);
+        background: transparent;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn-custom-top {
+        padding: 8px 16px;
+        border-radius: 99px;
+        border: none;
+        background: var(--teal);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      /* Hero */
+      .hero {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 32px 6% 20px;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 36px;
+        align-items: center;
+      }
+      .hero-text h1 {
+        font-size: 2.6rem;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 12px;
+      }
+      .hero-text p {
+        color: var(--text-muted);
+        font-size: 0.98rem;
+        line-height: 1.55;
+        margin-bottom: 16px;
+        max-width: 460px;
+      }
+      .color-bar {
+        display: flex;
+        height: 5px;
+        width: 170px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 22px;
+      }
+      .color-bar div:nth-child(1) {
+        flex: 1;
+        background: var(--purple-dark);
+      }
+      .color-bar div:nth-child(2) {
+        flex: 1;
+        background: var(--coral);
+      }
+      .color-bar div:nth-child(3) {
+        flex: 1;
+        background: var(--teal);
+      }
+
+      .login-box {
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(74, 53, 104, 0.08);
+        border: 1px solid #ece8f6;
+        max-width: 430px;
+      }
+      .login-box label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .input-group {
+        display: flex;
+        gap: 8px;
+      }
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 99px;
+        border: 1.5px solid #dcd6ec;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--purple-dark);
+        outline: none;
+        background: #fff;
+      }
+      .code-input {
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .btn-primary {
+        padding: 12px 24px;
+        border-radius: 99px;
+        border: none;
+        background: var(--purple-btn);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .alert {
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        margin-bottom: 14px;
+        font-weight: 600;
+      }
+      .alert-err {
+        background: #fff1f2;
+        color: #be123c;
+        border: 1px solid #fecdd3;
+      }
+      .alert-ok {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+      }
+
+      .hero-art {
+        text-align: center;
+      }
+      .hero-art svg {
+        width: 100%;
+        max-width: 370px;
+        height: auto;
+      }
+
+      /* Section Tarifs : 3 colonnes horizontales sur PC, empilées sur mobile */
+      .plans-section {
+        max-width: 1120px;
+        width: 100%;
+        margin: 10px auto 40px;
+        padding: 0 6%;
+      }
+      .plans-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .plans-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+      }
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .plan-card {
+        background: #fff;
+        padding: 22px;
+        border-radius: 16px;
+        border: 1px solid #ece8f6;
+        box-shadow: 0 6px 20px rgba(74, 53, 104, 0.04);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .plan-tag {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--teal);
+        text-transform: uppercase;
+      }
+      .plan-volume {
+        font-size: 1.7rem;
+        font-weight: 800;
+        margin: 6px 0;
+      }
+      .plan-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--coral);
+        margin-bottom: 10px;
+      }
+      .plan-desc {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-bottom: 18px;
+      }
+      .btn-buy {
+        width: 100%;
+        padding: 11px;
+        border-radius: 99px;
+        border: none;
+        background: var(--bg-lavender);
+        color: var(--purple-dark);
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-buy:hover {
+        background: var(--purple-btn);
+        color: #fff;
+      }
+
+      /* Pop-up Modal */
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(25, 18, 38, 0.55);
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+        z-index: 100;
+      }
+      .modal-card {
+        background: #fff;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 20px;
+        padding: 26px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: var(--text-muted);
+      }
+      .field {
+        margin-bottom: 14px;
+        text-align: left;
+      }
+      .field label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .price-preview {
+        background: var(--bg-lavender);
+        padding: 12px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: var(--purple-dark);
+        margin-bottom: 16px;
+      }
+
+      footer {
+        margin-top: auto;
+        text-align: center;
+        padding: 16px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        border-top: 1px solid #ece8f6;
+        background: #fff;
+      }
+
+      @media (max-width: 820px) {
+        .hero {
+          grid-template-columns: 1fr;
+          text-align: center;
+          padding-top: 20px;
+        }
+        .hero-text p,
+        .login-box,
+        .color-bar {
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .hero-art {
+          order: -1;
+        }
+        .hero-art svg {
+          max-width: 220px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+        .plans-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="brand">Knight<span>Area</span></div>
+      <div class="nav-btns">
+        <a href="#tarifs" class="btn-outline">Tarifs</a>
+        <button
+          type="button"
+          class="btn-custom-top"
+          onclick="openModal(650, true)"
+        >
+          + Personnaliser
+        </button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Knight Area</h1>
+        <p>
+          Connectez-vous au haut débit. Entrez votre code ou demandez un forfait
+          directement à l'administrateur.
+        </p>
+        <div class="color-bar">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <div class="login-box">
+          {% if error %}
+          <div class="alert alert-err">{{ error }}</div>
+          {% endif %} {% if req_sent or (latest_req and latest_req.status ==
+          'pending') %}
+          <div class="alert alert-ok" id="request-status-banner">
+            ⏳ Demande envoyée ! En attente de validation par l'admin...<br />
+            <small>Vérification de la demande en cours...</small>
+          </div>
+          <script>
+            const requestStatusInterval = setInterval(async () => {
+              try {
+                const response = await fetch(window.location.href);
+                if (response.redirected) {
+                  window.location.href = response.url;
+                  clearInterval(requestStatusInterval);
+                  return;
+                }
+                if (!response.ok) {
+                  throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const currentLoginBox = document.querySelector(".login-box");
+                const updatedLoginBox = doc.querySelector(".login-box");
+
+                if (currentLoginBox && updatedLoginBox) {
+                  currentLoginBox.innerHTML = updatedLoginBox.innerHTML;
+                }
+                if (!doc.querySelector("#request-status-banner")) {
+                  clearInterval(requestStatusInterval);
+                }
+              } catch (error) {
+                console.error("Impossible d'actualiser la demande :", error);
+              }
+            }, 3000);
+          </script>
+          {% elif approved_unused_code %}
+          <div class="alert alert-ok" style="text-align: center">
+            ✅ Votre demande a été acceptée !<br />
+            Voici votre code :
+            <strong style="font-size: 1.15rem; letter-spacing: 1.5px"
+              >{{ approved_unused_code }}</strong
+            ><br />
+          </div>
+          {% endif %}
+
+          <form method="POST">
+            <input type="hidden" name="action_type" value="login" />
+            <label for="code">Vous avez déjà un ticket ?</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="code-input"
+                id="code"
+                name="code"
+                value="{{ approved_unused_code or '' }}"
+                placeholder="XXXX-XXXX"
+                maxlength="12"
+                required
+                autocomplete="off"
+              />
+              <button type="submit" class="btn-primary">Get Started</button>
+            </div>
+          </form>
+          <p style="font-size: 0.75rem; color: #8c869e; margin-top: 12px">
+            Appareil : <strong>{{ client_mac or 'Détection...' }}</strong>
+          </p>
+          <a
+            href="http://{{ gateway_ip }}/"
+            style="
+              display: block;
+              margin-top: 10px;
+              color: #8c869e;
+              font-size: 0.75rem;
+              text-align: center;
+            "
+            >Problème de chargement ? Actualiser la session</a
+          >
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <svg
+          viewBox="0 0 400 320"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="200" cy="170" r="135" fill="#EBE6F7" opacity="0.6" />
+          <path
+            d="M135 115C170 82 230 82 265 115"
+            stroke="#EB6B7A"
+            stroke-width="14"
+            stroke-linecap="round"
+          />
+          <path
+            d="M158 138C182 116 218 116 242 138"
+            stroke="#F08A88"
+            stroke-width="14"
+            stroke-linecap="round"
+          />
+          <path
+            d="M180 160C192 150 208 150 220 160"
+            stroke="#EB6B7A"
+            stroke-width="14"
+            stroke-linecap="round"
+          />
+          <rect x="115" y="130" width="22" height="90" rx="11" fill="#593E7A" />
+          <rect x="263" y="130" width="22" height="90" rx="11" fill="#593E7A" />
+          <path
+            d="M315 265C325 225 355 210 365 215C360 245 340 265 315 265Z"
+            fill="#18B394"
+          />
+          <path
+            d="M310 265C305 230 325 200 335 200C340 230 325 255 310 265Z"
+            fill="#20C9A6"
+          />
+          <rect x="75" y="205" width="250" height="65" rx="18" fill="#4A3568" />
+          <circle cx="235" cy="238" r="6" fill="#EB6B7A" />
+          <circle cx="260" cy="238" r="6" fill="#F08A88" />
+          <circle cx="285" cy="238" r="6" fill="#18B394" />
+        </svg>
+      </div>
+    </section>
+
+    <section class="plans-section" id="tarifs">
+      <div class="plans-header">
+        <div class="plans-title">Nos Forfaits</div>
+        <button
+          type="button"
+          class="btn-outline"
+          onclick="openModal(1000, true)"
+        >
+          ⚙️ Personnaliser ma demande
+        </button>
+      </div>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div>
+            <div class="plan-tag">Essentiel</div>
+            <div class="plan-volume">300 Mo</div>
+            <div class="plan-price">100 FCFA</div>
+            <div class="plan-desc">
+              Navigation rapide, WhatsApp et recherches.
+            </div>
+          </div>
+          <button type="button" class="btn-buy" onclick="openModal(300, false)">
+            Demander ce ticket
+          </button>
+        </div>
+        <div class="plan-card" style="border: 2px solid var(--purple-btn)">
+          <div>
+            <div class="plan-tag" style="color: var(--coral)">Populaire</div>
+            <div class="plan-volume">650 Mo</div>
+            <div class="plan-price">200 FCFA</div>
+            <div class="plan-desc">
+              Réseaux sociaux, vidéos et navigation fluide.
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn-buy"
+            style="background: var(--purple-btn); color: #fff"
+            onclick="openModal(650, false)"
+          >
+            Demander ce ticket
+          </button>
+        </div>
+        <div class="plan-card">
+          <div>
+            <div class="plan-tag">Maxi Data</div>
+            <div class="plan-volume">1.5 Go</div>
+            <div class="plan-price">300 FCFA</div>
+            <div class="plan-desc">
+              Streaming vidéo, téléchargements et travail.
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn-buy"
+            onclick="openModal(1536, false)"
+          >
+            Demander ce ticket
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pop-up de demande de ticket -->
+    <div class="modal-backdrop" id="reqModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 id="modalTitle">Demander un ticket</h3>
+          <button type="button" class="close-btn" onclick="closeModal()">
+            &times;
+          </button>
+        </div>
+        <form method="POST">
+          <input type="hidden" name="action_type" value="request_ticket" />
+          <input
+            type="hidden"
+            name="estimated_price"
+            id="hiddenPrice"
+            value="100"
+          />
+
+          <div class="field">
+            <label>Votre prénom / nom :</label>
+            <input
+              type="text"
+              name="client_name"
+              placeholder="Ex: Koffi"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label>Volume souhaité (en Mo — 1024 Mo = 1 Go) :</label>
+            <input
+              type="number"
+              name="quota_mb"
+              id="quotaInput"
+              value="300"
+              min="100"
+              step="50"
+              required
+              oninput="updatePrice()"
+            />
+          </div>
+
+          <div class="field">
+            <label>Nombre d'appareils :</label>
+            <select
+              name="max_devices"
+              id="devicesInput"
+              onchange="updatePrice()"
+            >
+              <option value="1">1 appareil (Téléphone OU PC)</option>
+              <option value="2">
+                2 appareils (Téléphone + PC en même temps — +50%)
+              </option>
+            </select>
+          </div>
+
+          <div class="price-preview">
+            Tarif estimé : <span id="priceDisplay">100</span> FCFA
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%">
+            Envoyer la demande
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer>Knight-WiFiArea • Connexion sécurisée</footer>
+
+    <script>
+      function openModal(quotaMb, isCustom) {
+        document.getElementById("modalTitle").innerText = isCustom
+          ? "Personnaliser ma demande"
+          : "Demander ce forfait";
+        document.getElementById("quotaInput").value = quotaMb;
+        document.getElementById("devicesInput").value = "1";
+        updatePrice();
+        document.getElementById("reqModal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("reqModal").style.display = "none";
+      }
+      function updatePrice() {
+        const mb = parseFloat(document.getElementById("quotaInput").value) || 0;
+        const devices =
+          parseInt(document.getElementById("devicesInput").value) || 1;
+        let basePrice = 100;
+        if (mb <= 300) basePrice = 100;
+        else if (mb <= 650) basePrice = 200;
+        else if (mb <= 1536) basePrice = 300;
+        else basePrice = Math.ceil(((mb / 1536) * 300) / 50) * 50;
+
+        if (devices === 2) basePrice = Math.ceil((basePrice * 1.5) / 50) * 50;
+
+        document.getElementById("priceDisplay").innerText = basePrice;
+        document.getElementById("hiddenPrice").value = basePrice;
+      }
+    </script>
+  </body>
+</html>

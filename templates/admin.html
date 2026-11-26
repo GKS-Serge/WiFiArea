@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau de Bord - Wifi Area</title>
+    <style>
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #f8f9fc;
+        color: #1e293b;
+        margin: 0;
+        padding: 24px;
+      }
+      .container {
+        max-width: 1150px;
+        margin: 0 auto;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .header h2 {
+        margin: 0;
+        color: #4a3568;
+      }
+      .logout {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: #fff;
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 600;
+      }
+      .stat-val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #4a3568;
+        margin-top: 4px;
+      }
+
+      .box {
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+      }
+      .box-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .box h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #334155;
+      }
+
+      input,
+      select {
+        padding: 9px 12px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.9rem;
+      }
+      button {
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: none;
+        background: #4a3568;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .btn-clean {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      th {
+        color: #64748b;
+        font-weight: 700;
+        background: #f8fafc;
+      }
+
+      .badge {
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .st-active {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      .st-unused {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+      .st-exhausted {
+        background: #fef3c7;
+        color: #b45309;
+      }
+      .st-banned {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      .actions {
+        display: flex;
+        gap: 6px;
+      }
+      .btn-sm {
+        padding: 5px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        background: #fff;
+      }
+      .btn-ok {
+        background: #dcfce7;
+        border-color: #86efac;
+        color: #15803d;
+      }
+      .btn-del {
+        border-color: #fecaca;
+        color: #dc2626;
+        background: #fff5f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Wifi Area — Espace Administrateur</h2>
+        <a href="/admin/logout" class="logout">Déconnexion</a>
+      </div>
+
+      {% if pending_requests %}
+      <div class="box" style="border: 2px solid #18b394; background: #f0fdf9">
+        <div class="box-head">
+          <h3 style="color: #0f766e">
+            🔔 Demandes clients en attente ({{ pending_requests|length }})
+          </h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Volume</th>
+              <th>Appareils</th>
+              <th>Tarif</th>
+              <th>MAC / IP</th>
+              <th>Décision</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in pending_requests %}
+            <tr>
+              <td><strong>{{ r.client_name }}</strong></td>
+              <td>{{ r.quota_mb | int }} Mo</td>
+              <td>{{ r.max_devices }} appareil(s)</td>
+              <td><strong>{{ r.estimated_price }} FCFA</strong></td>
+              <td style="font-family: monospace; font-size: 0.8rem">
+                {{ r.mac_address }} ({{ r.ip_address }})
+              </td>
+              <td class="actions">
+                <a
+                  href="/admin/request/{{ r.id }}/approve"
+                  class="btn-sm btn-ok"
+                  >✅ Accepter & Activer</a
+                >
+                <a
+                  href="/admin/request/{{ r.id }}/reject"
+                  class="btn-sm btn-del"
+                  >Refuser</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">CLIENTS ACTIFS</div>
+          <div class="stat-val" style="color: #18b394">
+            {{ stats.active_users or 0 }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">CODES DISPONIBLES</div>
+          <div class="stat-val">{{ stats.available_codes or 0 }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">DATA CONSOMMÉE</div>
+          <div class="stat-val" style="color: #eb6b7a">
+            {{ format_bytes(stats.total_used_bytes) }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">QR CODE PORTAIL CLIENT</div>
+          <div id="qrcode" style="margin-top: 6px"></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3 style="margin-bottom: 12px">Générer des tickets manuellement</h3>
+        <form
+          method="POST"
+          style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center"
+        >
+          <label
+            >Quantité :
+            <input
+              type="number"
+              name="count"
+              value="3"
+              min="1"
+              max="50"
+              style="width: 70px"
+              required
+          /></label>
+          <label
+            >Volume (Mo) :
+            <input
+              type="number"
+              name="quota_mb"
+              value="300"
+              min="50"
+              style="width: 90px"
+              required
+          /></label>
+          <label
+            >Appareils :
+            <select name="max_devices">
+              <option value="1">1 appareil</option>
+              <option value="2">2 appareils (PC + Tél)</option>
+            </select>
+          </label>
+          <button type="submit">+ Créer</button>
+        </form>
+        {% if new_codes %}
+        <div
+          style="
+            margin-top: 14px;
+            padding: 12px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+          "
+        >
+          <strong>Nouveaux codes :</strong> {{ new_codes | join(' • ') }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="box">
+        <div class="box-head">
+          <h3>Tickets ({{ vouchers|length }})</h3>
+          <a
+            href="/admin/cleanup"
+            class="btn-clean"
+            onclick="
+              return confirm('Supprimer tous les codes épuisés et bannis ?');
+            "
+            >🗑️ Nettoyer épuisés / bannis</a
+          >
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Max Appareils</th>
+              <th>Statut</th>
+              <th>Consommation</th>
+              <th>MAC liée(s)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in vouchers %}
+            <tr>
+              <td><strong>{{ v.code }}</strong></td>
+              <td>{{ v.max_devices or 1 }} app.</td>
+              <td>
+                <span class="badge st-{{ v.status }}"
+                  >{{ v.status | upper }}</span
+                >
+              </td>
+              <td>
+                {{ format_bytes(v.used_bytes) }} / {{
+                format_bytes(v.quota_bytes) }}
+              </td>
+              <td style="font-family: monospace; font-size: 0.8rem">
+                {{ v.mac_address or '—' }}
+              </td>
+              <td class="actions">
+                {% if v.status != 'banned' %}
+                <a href="/admin/action/{{ v.id }}/banned" class="btn-sm"
+                  >Bannir</a
+                >
+                {% else %}
+                <a href="/admin/action/{{ v.id }}/active" class="btn-sm"
+                  >Réactiver</a
+                >
+                {% endif %}
+                <a
+                  href="/admin/action/{{ v.id }}/delete"
+                  class="btn-sm btn-del"
+                  onclick="return confirm('Supprimer {{ v.code }} ?');"
+                  >Supprimer</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+      new QRCode(document.getElementById("qrcode"), {
+        text: {{ portal_url|tojson }},
+        width: 75,
+        height: 75,
+      });
+    </script>
+    <script>
+      setInterval(async () => {
+        if (document.activeElement.matches(".container form input")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(window.location.href);
+          if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}`);
+          }
+          const html = await response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const currentContainer = document.querySelector(".container");
+          const updatedContainer = doc.querySelector(".container");
+
+          if (currentContainer && updatedContainer) {
+            currentContainer.innerHTML = updatedContainer.innerHTML;
+            const qrCode = document.getElementById("qrcode");
+            if (qrCode && !qrCode.innerHTML.trim()) {
+              new QRCode(qrCode, {
+                text: {{ portal_url|tojson }},
+                width: 75,
+                height: 75,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Impossible d'actualiser le tableau admin :", error);
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+Flask
+pydivert
+python-dotenv
